@@ -39,6 +39,7 @@ dependencies:
   path: ^1.9.1
   provider: ^6.1.5+1
   diacritic: ^0.1.6
+  window_manager: ^0.5.1
 
 dev_dependencies:
   flutter_test:

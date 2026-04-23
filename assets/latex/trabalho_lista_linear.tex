@@ -1,0 +1,514 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{geometry}
+\usepackage{longtable}
+
+\geometry{a4paper, margin=2.5cm}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+\title{\textbf{BUNKER OS: IMPLEMENTAÇÃO DE SISTEMA DE INVENTÁRIO PÓS-APOCALÍPTICO COM LISTA SIMPLESMENTE ENCADEADA}}
+\author{\textbf{Aluno:} José Cláudio Medeiros de Lima \\ \textbf{Professor:} Raul Benites}
+\date{Mossoró – RN, 2026}
+
+\begin{document}
+
+\begin{center}
+    \Large \textbf{UNIVERSIDADE FEDERAL RURAL DO SEMI-ÁRIDO – UFERSA} \\
+    \Large \textbf{PROGRAMA DE PÓS-GRADUAÇÃO EM CIÊNCIA DA COMPUTAÇÃO – PPgCC}
+\end{center}
+
+\vspace{2cm}
+
+\begin{center}
+    \LARGE \textbf{BUNKER OS: IMPLEMENTAÇÃO DE SISTEMA DE INVENTÁRIO PÓS-APOCALÍPTICO COM LISTA SIMPLESMENTE ENCADEADA}
+\end{center}
+
+\vspace{1cm}
+
+\noindent \textbf{Aluno:} José Cláudio Medeiros de Lima \\
+\textbf{Professor:} Raul Benites
+
+\vspace{2cm}
+
+\begin{center}
+    \textbf{Mossoró – RN, 2026}
+\end{center}
+
+\newpage
+
+\section{INTRODUÇÃO}
+
+O presente trabalho descreve o desenvolvimento de um sistema de gerenciamento de inventário implementado como parte do Desafio Lista Linear, proposto na disciplina de Estruturas de Dados do Programa de Pós-Graduação em Ciência da Computação da UFERSA. A atividade propõe a implementação de um jogo de gestão de inventário capaz de adicionar, remover, buscar e listar itens, utilizando uma estrutura de lista linear e lendo os dados a partir de um arquivo \texttt{.txt} contendo exatamente 100 itens.
+
+Para além dos requisitos técnicos, o trabalho adota uma proposta estética e narrativa particular: o sistema é apresentado como o terminal de um antigo computador instalado em um bunker de sobrevivência em um mundo pós-apocalíptico. O software, denominado \textbf{BUNKER OS}, simula a aparência e o comportamento de um programa de linha de comando rodando em hardware dos anos 1980–1990, com fontes monoespaçadas, paleta de cores verde-fósforo sobre fundo preto, efeitos visuais de tela CRT com scanlines e curvatura, e moldura de monitor antigo com acabamento em plástico bege envelhecido.
+
+A temática do inventário segue a mesma lógica do cenário: os 100 itens do arquivo são objetos que um sobrevivente poderia encontrar em um bunker ou no mundo devastado — rações enlatadas, máscaras de gás, baterias corroídas, morfina em ampola, medidores Geiger, munições oxidadas, e outros artefatos de um mundo que não existe mais.
+
+\textbf{Prompt utilizado para gerar a lista de itens (ChatGPT – GPT-4o / OpenAI):}
+
+\begin{quote}
+\textit{"Gere uma lista de exatamente 100 itens de sobrevivência para um abrigo subterrâneo pós-apocalipse nuclear. Inclua suprimentos médicos, ferramentas enferrujadas, alimentos em conserva bizarros, componentes eletrônicos sucateados e itens de defesa. Formate a lista com um item por linha, apenas o nome do item."}
+\end{quote}
+
+O sistema foi implementado na linguagem \textbf{Dart} utilizando o framework \textbf{Flutter}, com execução na plataforma Windows. A estrutura de dados central é uma \textbf{lista simplesmente encadeada} implementada manualmente, sem uso de coleções nativas do Dart, atendendo ao requisito de implementação explícita de uma das estruturas estudadas.
+
+\begin{quote}
+\textbf{Código-fonte completo:} O repositório do projeto está disponível em \url{https://github.com/claudiomedeiros82/inventory}. Neste documento são apresentados apenas os arquivos diretamente relacionados ao escopo do trabalho. Um aplicativo Flutter gera automaticamente dezenas de arquivos de suporte — gerenciadores de plataforma, plugins, scripts de build, geração de código, manifests de assets, etc. — que não compõem a lógica implementada e foram omitidos para objetividade.
+\end{quote}
+
+\section{DESENVOLVIMENTO}
+
+\subsection{Arquitetura e Tecnologias}
+
+O projeto foi desenvolvido em Flutter/Dart para desktop Windows, com uma arquitetura em camadas:
+
+\begin{itemize}
+    \item \textbf{Camada de Domínio} (\texttt{lib/core/domain/}): contém as entidades \texttt{ItemEntity} e \texttt{Node}, bem como a implementação da \texttt{CustomLinkedList}.
+    \item \textbf{Camada de Serviço} (\texttt{lib/services/}): contém o \texttt{InventoryService}, responsável pelas operações sobre a lista e pela persistência em arquivo.
+    \item \textbf{Camada de UI} (\texttt{lib/ui/}): contém o \texttt{InventoryController} (padrão ChangeNotifier/Provider) e todos os widgets visuais.
+\end{itemize}
+
+A interface é composta por widgets que reconstituem a experiência de um terminal antigo: moldura de gabinete CRT (\texttt{BezelFrame}), efeito de tela catódica com scanlines (\texttt{CRTScreen}), cabeçalho com status (\texttt{TerminalHeader}), lista rolável (\texttt{InventoryListView}), barra de menu e campo de prompt.
+
+\subsection{Estrutura de Dados: Lista Simplesmente Encadeada}
+
+A estrutura de dados central é uma \textbf{lista simplesmente encadeada} implementada nos arquivos \texttt{lib/core/domain/node.dart} e \texttt{lib/core/domain/custom\_linked\_list.dart}. A escolha é intencional: a lista encadeada é a estrutura mais adequada para um inventário cujo tamanho varia dinamicamente, permitindo inserção e remoção sem realocação de memória.
+
+\subsubsection{Entidade de Item (\texttt{ItemEntity})}
+
+A entidade \texttt{ItemEntity} é o dado carregado em cada nó da lista. Ela representa um item do inventário com seu nome:
+
+\begin{lstlisting}[language=java]
+// lib/core/domain/item_entity.dart
+class ItemEntity {
+  final String nome;
+
+  const ItemEntity({required this.nome});
+
+  @override
+  String toString() => 'ItemEntity(nome: $nome)';
+}
+\end{lstlisting}
+
+\subsubsection{Nó da Lista (\texttt{Node})}
+
+O nó encapsula um \texttt{ItemEntity} e mantém um ponteiro para o próximo nó da cadeia. O atributo \texttt{next} é nulável (\texttt{Node?}), indicando o fim da lista quando \texttt{null}:
+
+\begin{lstlisting}[language=java]
+// lib/core/domain/node.dart
+import 'item_entity.dart';
+
+class Node {
+  final ItemEntity item;
+  Node? next;
+
+  Node(this.item);
+}
+\end{lstlisting}
+
+\subsubsection{Lista Encadeada (\texttt{CustomLinkedList})}
+
+A \texttt{CustomLinkedList} mantém a referência para o nó cabeça (\texttt{\_head}) e o tamanho atual (\texttt{\_size}). Todas as quatro operações do desafio são implementadas nesta classe:
+
+\begin{lstlisting}[language=java]
+// lib/core/domain/custom_linked_list.dart
+import 'package:diacritic/diacritic.dart';
+import 'item_entity.dart';
+import 'node.dart';
+
+class CustomLinkedList {
+  Node? _head;
+  int _size = 0;
+
+  Node? get head => _head;
+  int get size => _size;
+
+  // ADICIONAR: percorre ate o ultimo no e insere ao final - O(n)
+  void add(ItemEntity item) {
+    final newNode = Node(item);
+    if (_head == null) {
+      _head = newNode;
+    } else {
+      Node? current = _head;
+      while (current?.next != null) {
+        current = current?.next;
+      }
+      current?.next = newNode;
+    }
+    _size++;
+  }
+
+  // REMOVER: localiza pelo nome e reconecta os ponteiros - O(n)
+  bool remove(String nome) {
+    if (_head == null) return false;
+
+    final target = removeDiacritics(nome.trim().toLowerCase());
+
+    if (removeDiacritics(_head!.item.nome.trim().toLowerCase()) == target) {
+      _head = _head?.next;
+      _size--;
+      return true;
+    }
+
+    Node? current = _head;
+    while (current?.next != null) {
+      if (removeDiacritics(current!.next!.item.nome.trim().toLowerCase()) == target) {
+        current.next = current.next!.next;
+        _size--;
+        return true;
+      }
+      current = current.next;
+    }
+
+    return false;
+  }
+
+  // BUSCAR: retorna o indice 0-based do primeiro no que contem a substring - O(n)
+  int search(String nome) {
+    Node? current = _head;
+    int index = 0;
+    final target = removeDiacritics(nome.trim().toLowerCase());
+
+    while (current != null) {
+      final itemName = removeDiacritics(current.item.nome.trim().toLowerCase());
+      if (itemName.contains(target)) {
+        return index;
+      }
+      current = current.next;
+      index++;
+    }
+    return -1;
+  }
+
+  // LIMPAR: desfaz a cadeia em O(1), sem percorrer os nos
+  void clear() {
+    _head = null;
+    _size = 0;
+  }
+
+  // LISTAR: percorre a cadeia e retorna uma List<ItemEntity> - O(n)
+  List<ItemEntity> toList() {
+    final list = <ItemEntity>[];
+    Node? current = _head;
+    while (current != null) {
+      list.add(current.item);
+      current = current.next;
+    }
+    return list;
+  }
+}
+\end{lstlisting}
+
+A tabela a seguir resume as operações e suas complexidades:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Operação} & \textbf{Método} & \textbf{Complexidade} & \textbf{Descrição} \\
+\hline
+Listar & \texttt{toList()} & O(n) & Percorre todos os nós e retorna lista \\
+\hline
+Adicionar & \texttt{add(item)} & O(n) & Percorre até o último nó e anexa \\
+\hline
+Remover & \texttt{remove(nome)} & O(n) & Busca e reconecta ponteiros \\
+\hline
+Buscar & \texttt{search(nome)} & O(n) & Retorna índice do primeiro nó encontrado \\
+\hline
+Limpar & \texttt{clear()} & O(1) & Anula a cabeça \\
+\hline
+\end{tabular}
+\end{table}
+
+A busca e remoção normalizam acentos via \texttt{removeDiacritics}, tornando as operações insensíveis a diacríticos (e.g., "mercurio" localiza "Mercúrio").
+
+\subsection{Serviço de Inventário (\texttt{InventoryService})}
+
+O \texttt{InventoryService} é a camada que conecta a estrutura de dados à camada de apresentação e ao repositório de arquivo. Ele instancia a \texttt{CustomLinkedList}, delega as operações a ela e persiste as alterações:
+
+\begin{lstlisting}[language=java]
+// lib/services/inventory_service.dart
+import '../core/domain/custom_linked_list.dart';
+import '../core/domain/item_entity.dart';
+import '../core/repositories/file_interface.dart';
+
+class InventoryService {
+  final IFileRepository _repository;
+  final CustomLinkedList _list = CustomLinkedList();
+
+  CustomLinkedList get list => _list;
+
+  InventoryService(this._repository);
+
+  // LISTAR: retorna todos os nos como lista
+  List<ItemEntity> getItems() => _list.toList();
+
+  // CARREGAR DO ARQUIVO: le o .txt e popula a lista encadeada
+  Future<void> loadInventory() async {
+    _list.clear();
+    final lines = await _repository.readLines();
+    for (final line in lines) {
+      if (line.trim().isNotEmpty) {
+        _list.add(ItemEntity(nome: line.trim()));
+      }
+    }
+  }
+
+  // ADICIONAR: insere na lista e persiste
+  Future<void> addItem(String nome) async {
+    if (nome.trim().isNotEmpty) {
+      _list.add(ItemEntity(nome: nome.trim()));
+      await _save();
+    }
+  }
+
+  // REMOVER: remove da lista e persiste; retorna false se nao encontrado
+  Future<bool> removeItem(String nome) async {
+    final removed = _list.remove(nome);
+    if (removed) {
+      await _save();
+    }
+    return removed;
+  }
+
+  // BUSCAR: delega a lista encadeada; retorna indice 0-based ou -1
+  int searchItem(String nome) => _list.search(nome);
+
+  // Persiste o estado atual da lista no arquivo .txt
+  Future<void> _save() async {
+    final items = _list.toList();
+    final lines = items.map((e) => e.nome).toList();
+    await _repository.writeLines(lines);
+  }
+}
+\end{lstlisting}
+
+\subsection{Tela Inicial — Listagem do Inventário}
+
+Ao iniciar, o sistema lê o arquivo \texttt{items.txt} e carrega os 100 itens na lista encadeada, exibindo-os em ordem na tela principal.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../prints/init.png}
+    \caption{Tela inicial do BUNKER OS. O cabeçalho exibe o nome do sistema (\texttt{--- BUNKER OS v1.0.4 ---}) e o total de itens carregados (\texttt{SUPPLY MANIFEST – TOTAL ITEMS: 100}). A lista percorre todos os nós da estrutura encadeada via \texttt{toList()}, numerando-os sequencialmente entre colchetes. O primeiro item aparece selecionado por padrão (\texttt{>}). Na parte inferior, a barra de menu exibe os comandos disponíveis.}
+\end{figure}
+
+A tela é dividida em três regiões funcionais: o cabeçalho com nome e status; a área de listagem rolável com os nós da cadeia; e a barra de menu com o prompt de entrada.
+
+\subsection{Comando \texttt{add} — Adição de Itens}
+
+O comando \texttt{add <nome>} cria um novo \texttt{ItemEntity}, instancia um \texttt{Node} e o insere ao final da lista encadeada via o método \texttt{add()} da \texttt{CustomLinkedList}. Em seguida, o arquivo \texttt{.txt} é regravado com o novo estado da lista.
+
+\textbf{Sintaxe:} \texttt{add <nome do item>}  \\
+\textbf{Exemplo:} \texttt{add Sabão Crá Crá}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../prints/add item.png}
+    \caption{O operador digita \texttt{add sabão crá crá} no prompt. A lista exibe os itens 089 a 100. O cabeçalho já indica "TOTAL ITEMS: 101" após a inserção do nó ao final da cadeia.}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../prints/item added.png}
+    \caption{Após a execução do \texttt{add}, o sistema navega automaticamente até o novo item e o seleciona (\texttt{>}), confirmando ao operador que o nó foi inserido no final da lista encadeada. O item \texttt{[101]> SABÃO CRÁ CRÁ} aparece como último elemento da cadeia.}
+\end{figure}
+
+O método \texttt{add} percorre todos os nós da cadeia até o nó com \texttt{next == null} e conecta o novo nó a esse ponteiro, preservando a sequência da lista.
+
+\subsection{Comando \texttt{search} — Busca por Nome}
+
+O comando \texttt{search <texto>} aciona o método \texttt{search()} da \texttt{CustomLinkedList}, que percorre a cadeia do nó cabeça até o último nó, comparando cada \texttt{item.nome} (normalizado) com a substring buscada. Ao localizar o primeiro nó correspondente:
+
+\begin{enumerate}
+    \item O cabeçalho exibe \texttt{> ITEM \#NNN LOCALIZADO: "nome do item"}.
+    \item O item é selecionado visualmente na lista (\texttt{>}).
+    \item A lista rola automaticamente até o item encontrado.
+\end{enumerate}
+
+\textbf{Sintaxe:} \texttt{search <nome ou trecho do nome>}  \\
+\textbf{Exemplo:} \texttt{search mercurio}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../prints/find item.png}
+    \caption{O comando \texttt{search mercurio} localizou o item "Termômetro de Mercúrio Clínico" no índice \#94 da lista encadeada. O cabeçalho exibe \texttt{> ITEM \#94 LOCALIZADO: "Termômetro de Mercúrio Clínico"}. A lista rolou até o nó correspondente, que aparece selecionado com \texttt{>} ao lado de \texttt{[094]>}. A normalização de diacríticos permitiu localizar "Mercúrio" com a busca "mercurio", sem acento.}
+\end{figure}
+
+O índice exibido ao operador é base 1 (posição humana). Internamente, \texttt{search()} retorna o índice 0-based, e o \texttt{InventoryController} soma 1 ao exibir a mensagem de status.
+
+\subsection{Comando \texttt{remove} — Remoção de Itens}
+
+O comando \texttt{remove <índice>} (ou \texttt{del <índice>}) identifica o item pela posição informada, exibe uma caixa de confirmação em estilo ASCII e, após confirmação, executa o método \texttt{remove()} da \texttt{CustomLinkedList}. Este método percorre a cadeia e reconecta os ponteiros, excluindo o nó da estrutura.
+
+\textbf{Sintaxe:} \texttt{remove <número do índice>}  \\
+\textbf{Exemplo:} \texttt{remove 015}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../prints/remove item.png}
+    \caption{O operador digita \texttt{remove 015} no prompt. A tela exibe o estado pós-busca (item \#94 selecionado, mensagem no cabeçalho). Ao confirmar na caixa de diálogo, o método \texttt{remove()} localiza o 15º nó da cadeia ("Bandagens de Linho Sujas"), redireciona o ponteiro \texttt{next} do nó anterior para o nó seguinte, descartando a referência ao nó removido, e regrava o arquivo.}
+\end{figure}
+
+A operação de remoção para o nó cabeça é tratada como caso especial: \texttt{\_head} passa a apontar para \texttt{\_head.next}. Para os demais nós, o algoritmo percorre a cadeia até que \texttt{current.next} seja o nó alvo, então executa \texttt{current.next = current.next.next}.
+
+\subsection{Comando \texttt{filter} — Filtragem em Tempo Real}
+
+O comando \texttt{filter <texto>} aplica um \textbf{filtro visual} na camada de apresentação: o \texttt{InventoryController} filtra a saída de \texttt{toList()} sem modificar a lista encadeada subjacente. Apenas os itens que contêm o texto são exibidos. O comando \texttt{clear} restaura a exibição completa.
+
+\textbf{Sintaxe:} \texttt{filter <texto>}
+
+\subsection{Persistência de Dados}
+
+O inventário é carregado do \texttt{items.txt} na inicialização via \texttt{loadInventory()}, que limpa a lista e percorre as linhas do arquivo inserindo cada uma como um nó. Toda operação de escrita (\texttt{add} e \texttt{remove}) chama \texttt{\_save()}, que executa \texttt{toList()} e regrava o arquivo com o estado atual da cadeia — garantindo que o inventário sobreviva ao encerramento do terminal.
+
+\section{ARQUIVO DE DADOS — \texttt{items.txt}}
+
+O arquivo utilizado no sistema contém exatamente 100 itens, um por linha, gerados conforme o prompt descrito na introdução. O conteúdo é o seguinte:
+
+\begin{lstlisting}[language=bash]
+Ração Enlatada de Carne Desconhecida
+Pastilhas de Purificação de Água Vencidas
+Máscara de Gás M-40 Rasgada
+Kit de Primeiros Socorros Manchado
+Lanterna Dínamo Quebrada
+Pé de Cabra Enferrujado
+Bateria de Chumbo Ácido Vazando
+Arame Farpado Galvanizado
+Sopa de Algas em Conserva
+Medidor Geiger Analógico
+Rádio Transmissor Valvulado
+Faca de Caça com Dente de Serra
+Munição de 9mm Oxidada
+Geleia de Cogumelos Radioativos
+Bandagens de Linho Sujas
+Alicate de Corte de Alta Precisão
+Chip de Processamento Queimado
+Barra de Cereais de Grilos
+Cantil de Alumínio Amassado
+Cabo de Cobre Desencapado
+Antibióticos de Amplo Espectro
+Machado de Incêndio com Cabo Rachado
+Óculos de Visão Noturna sem Lente
+Carne de Rato Desidratada
+Fósforos de Segurança Impermeáveis
+Placa de Circuito Impresso Verde
+Bastão Eletrificado com Mau Contato
+Estojo de Sutura Cirúrgica
+Seringa de Adrenalina Reutilizável
+Ovos de Tartaruga em Salmoura
+Chave de Fenda Estrela Desgastada
+Filtro de Ar de Hepa Saturado
+Cartuchos de Espingarda Calibre 12
+Leite em Pó Amarelado
+Bússola Magnética Desorientada
+Fusíveis de Vidro de 10A
+Spray de Pimenta Expirado
+Pomada para Queimaduras de Radiação
+Martelo de Unha Sem Cabeça
+Válvula Termiônica de Rádio
+Gordura Animal em Pote de Vidro
+Lona Plástica de Polietileno
+Sensores de Movimento Defeituosos
+Punhal de Combate de Carbono
+Solução Salina para Irrigação
+Serra de Arco para Metal
+Transformador de Tensão Pequeno
+Língua de Boi Enlatada
+Pilha Alcalina de 9V Corroída
+Fio de Nylon de Alta Resistência
+Morfina em Ampola de Vidro
+Marreta de Construção Pesada
+Teclado Mecânico sem Teclas
+Polpa de Fruta Sintética
+Máscara Cirúrgica Descartável
+Resistores de Carbono Diversos
+Granada de Atordoamento Inerte
+Bolsa de Sangue Tipo O Negativo
+Torquês de Armador Enferrujada
+Microfone de Lapela Quebrado
+Ensopado de Vísceras em Lata
+Fita Isolante de Tecido
+Capacitores Eletrolíticos Estufados
+Funda de Couro para Pedras
+Desinfetante Hospitalar Concentrado
+Chave Inglesa com Trava Presa
+Monitor de Tubo CRT Trincado
+Refeição Pronta MRE Sabor Insetos
+Sabão de Cinzas Caseiro
+Indutores de Núcleo de Ferrite
+Bestas de Madeira e Metal
+Luvas de Procedimento Nitrílicas
+Escada de Corda de Nylon
+Webcam de Segurança Analógica
+Cérebro de Porco em Conserva
+Vela de Cera de Abelha
+Placa de Vídeo de 256MB Antiga
+Soco Inglês de Latão
+Antisséptico de Iodo Povidona
+Pá de Trincheira Dobrável
+Fonte de Alimentação ATX 400W
+Bisunari de Mel Melado
+Agulhas Hipodérmicas Estéreis
+Cabo de Aço Inoxidável
+Mouse de Bolinha Desconfigurado
+Mina Terrestre de Treinamento
+Atadura Gessada Seca
+Nível de Bolha de Alumínio
+HD Externo de 500GB Batendo
+Caldo de Ossos Concentrado
+Papel Higiênico de Fibra Reciclada
+Transistores de Potência TO-3
+Escudo de Choque de Policarbonato
+Termômetro de Mercúrio Clínico
+Chave Allen de Milímetros
+Cooler de Processador de Cobre
+Fígado de Bacalhau em Óleo
+Detergente Biodegradável Seco
+Potenciômetros Deslizantes Ruins
+Bastão Retrátil de Metal
+\end{lstlisting}
+
+\section{CONCLUSÃO}
+
+O BUNKER OS atende integralmente aos requisitos do Desafio Lista Linear: realiza leitura de arquivo \texttt{.txt} com 100 itens, armazena-os em uma lista simplesmente encadeada implementada manualmente, e oferece as quatro operações exigidas — listar, adicionar, remover e buscar — por meio de uma interface de linha de comando modularizada. A separação em \texttt{Node}, \texttt{CustomLinkedList}, \texttt{InventoryService} e \texttt{InventoryController} reflete a modularização requerida, com cada componente responsável por uma única responsabilidade.
+
+A implementação da lista encadeada expõe com clareza o funcionamento da estrutura: inserção ao final por travessia de ponteiros, remoção por reconexão de \texttt{next}, busca linear com normalização de acentos, e conversão para lista nativa apenas quando necessário para a camada de apresentação. A escolha da estrutura é adequada ao domínio: o inventário cresce e diminui dinamicamente, e a lista encadeada acomoda essas operações sem realocação de memória.
+
+\vspace{1cm}
+\begin{flushright}
+\textit{José Cláudio Medeiros de Lima — PPgCC/UFERSA — Abril de 2026}
+\end{flushright}
+
+\end{document}

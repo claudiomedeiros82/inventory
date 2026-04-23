@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p .claude/commands .claude/agents)",
+      "Bash(cp .claude/flutter-factory-main/.claude/commands/*.md .claude/commands/)",
+      "Bash(cp .claude/flutter-factory-main/.claude/agents/*.md .claude/agents/)",
+      "Bash(cat d:/Desenvolvimento/Dart/pncp_finder/.claude/commands/*.md)",
+      "Bash(flutter pub:*)",
+      "Bash(flutter analyze:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(printf '@echo off\\\\r\\\\nfor /f \"\"tokens=1,2 delims==\"\" %%%%A in \\(.env\\) do \\(\\\\r\\\\n    if \"\"%%%%A\"\"==\"\"SENTRY_DSN\"\" set SENTRY_DSN=%%%%B\\\\r\\\\n\\)\\\\r\\\\nflutter run -d windows --dart-define=SENTRY_DSN=%%SENTRY_DSN%%\\\\r\\\\n')",
+      "Bash(\"d:/Desenvolvimento/Dart/pncp_finder/scripts/dev.bat\")",
+      "Bash(printf '@echo off\\\\r\\\\nfor /f \"\"tokens=1,2 delims==\"\" %%%%A in \\(.env\\) do \\(\\\\r\\\\n    if \"\"%%%%A\"\"==\"\"SENTRY_DSN\"\" set SENTRY_DSN=%%%%B\\\\r\\\\n\\)\\\\r\\\\nflutter build windows --release --dart-define=SENTRY_DSN=%%SENTRY_DSN%% && dart run msix:create\\\\r\\\\n')",
+      "Bash(\"d:/Desenvolvimento/Dart/pncp_finder/scripts/build-store.bat\")",
+      "Bash(flutter test:*)",
+      "Bash(xargs grep:*)",
+      "Bash(grep -r bookmark d:/Desenvolvimento/Dart/pncp_finder/.pub-cache/hosted/pub.dev/lucide_icons_flutter-*/lib/)",
+      "Read(//d/Desenvolvimento/Dart/pncp_finder/$\\(flutter pub cache dir 2>/dev/**)",
+      "Bash(find /d/Desenvolvimento/Dart/pncp_finder -type f \\\\\\(-name *.json -o -name *.md -o -name README* \\\\\\))",
+      "Bash(curl -s \"https://pncp.gov.br/api/search/?q=cadeira+gamer&tipos_documento=edital&ordenacao=-data&pagina=1&tam_pagina=1&status=encerradas&esferas=F\" -H \"Accept: application/json\" -H \"User-Agent: Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36\")",
+      "Bash(dart run:*)",
+      "Bash(dart -:*)",
+      "Bash(curl -s \"https://pncp.gov.br/api/search/?q=notebook&tipos_documento=edital&ordenacao=-data&pagina=1&tam_pagina=3&status=encerradas&esferas=F\" -H \"Accept: application/json\" -H \"User-Agent: Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36\")",
+      "Bash(curl -s \"https://pncp.gov.br/api/pncp/v1/orgaos/28167567000176/compras/2026/15/itens?pagina=1&tamanhoPagina=5\" -H \"Accept: application/json\" -H \"User-Agent: Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36\")",
+      "Bash(cat d:/Desenvolvimento/Dart/pncp_finder/test/core/services/*.dart)",
+      "Bash(dart analyze:*)",
+      "Bash(git checkout:*)"
+    ]
+  }
+}

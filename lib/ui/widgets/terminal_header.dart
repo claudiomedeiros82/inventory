@@ -8,7 +8,9 @@ class TerminalHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final itemCount = context.watch<InventoryController>().items.length;
+    final controller = context.watch<InventoryController>();
+    final itemCount = controller.items.length;
+    final statusMessage = controller.statusMessage;
     final terminalStyle = AppTheme.terminalStyle;
 
     return Column(
@@ -24,6 +26,14 @@ class TerminalHeader extends StatelessWidget {
           textAlign: TextAlign.center,
           style: terminalStyle.copyWith(fontSize: 14),
         ),
+        if (statusMessage != null) ...[
+          const SizedBox(height: 4),
+          Text(
+            '> $statusMessage',
+            textAlign: TextAlign.center,
+            style: terminalStyle.copyWith(fontSize: 12),
+          ),
+        ],
         const Divider(color: AppTheme.primaryColor, thickness: 2),
       ],
     );

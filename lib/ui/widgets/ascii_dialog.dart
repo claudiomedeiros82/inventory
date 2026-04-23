@@ -21,13 +21,15 @@ class ASCIIDialog extends StatefulWidget {
 }
 
 class _ASCIIDialogState extends State<ASCIIDialog> {
+  static const int _maxTitleLength = 36;
+
   int _selectedIndex = 0; // 0 for OK, 1 for CANCEL
   final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
-    _focusNode.requestFocus();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _focusNode.requestFocus());
   }
 
   @override
@@ -81,11 +83,9 @@ class _ASCIIDialogState extends State<ASCIIDialog> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  '''
-+---------------------------------------+
-| ${widget.title.padRight(37)} |
-+---------------------------------------+
-''',
+                  '+${'-' * (_maxTitleLength + 2)}+\n'
+                  '| ${widget.title.length > _maxTitleLength ? widget.title.substring(0, _maxTitleLength) : widget.title.padRight(_maxTitleLength)} |\n'
+                  '+${'-' * (_maxTitleLength + 2)}+',
                   style: terminalStyle,
                 ),
                 const SizedBox(height: 10),

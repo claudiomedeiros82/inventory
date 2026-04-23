@@ -19,7 +19,7 @@ class BunkerApp extends StatelessWidget {
           create: (_) => FileRepository(),
         ),
         ProxyProvider<IFileRepository, InventoryService>(
-          update: (_, repository, __) => InventoryService(repository),
+          update: (_, repository, previous) => previous ?? InventoryService(repository),
         ),
         ChangeNotifierProvider<InventoryController>(
           create: (context) => InventoryController(

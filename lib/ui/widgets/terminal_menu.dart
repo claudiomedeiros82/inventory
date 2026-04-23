@@ -11,7 +11,7 @@ class TerminalMenu extends StatelessWidget {
       children: [
         const Divider(color: AppTheme.primaryColor, thickness: 2),
         Text(
-          '> MENU: [ADD] Name | [SEARCH] Name | [DEL] or [REMOVE] Index',
+          '> MENU: [ADD] Name | [FILTER] Name | [SEARCH] Name | [DEL] or [REMOVE] Index | [CLEAR]',
           style: AppTheme.terminalStyle.copyWith(fontSize: 12),
         ),
         const SizedBox(height: 5),

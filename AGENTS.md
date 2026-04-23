@@ -23,7 +23,7 @@ Esta camada não possui dependências externas e contém a inteligência do sist
 O sistema deve utilizar o padrão de **Injeção de Dependência** via `get_it`.
 
 - **IFileRepository (Interface)**: Define o contrato `Future<List<String>> readLines()`.
-- **FileRepositoryImpl**: Implementação real que utiliza `dart:io` para ler o arquivo `itens.txt` do disco.
+- **FileRepositoryImpl**: Implementação real que utiliza `dart:io` para ler o arquivo `items.txt` do disco.
 - **MockFileRepository**: Implementação para testes que retorna uma lista estática de Strings em memória, permitindo testes sem I/O de disco.
 - **InventoryService**: O orquestrador. Recebe `IFileRepository` via construtor. Carrega os dados para a `CustomLinkedList` e expõe métodos de negócio para o Controller.
 

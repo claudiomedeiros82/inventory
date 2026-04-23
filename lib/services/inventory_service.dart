@@ -6,9 +6,11 @@ class InventoryService {
   final IFileRepository _repository;
   final CustomLinkedList _list = CustomLinkedList();
 
+  CustomLinkedList get list => _list;
+
   InventoryService(this._repository);
 
-  CustomLinkedList get list => _list;
+  List<ItemEntity> getItems() => _list.toList();
 
   Future<void> loadInventory() async {
     _list.clear();
@@ -35,13 +37,11 @@ class InventoryService {
     return removed;
   }
 
+  int searchItem(String nome) => _list.search(nome);
+
   Future<void> _save() async {
     final items = _list.toList();
     final lines = items.map((e) => e.nome).toList();
     await _repository.writeLines(lines);
-  }
-
-  int searchItem(String nome) {
-    return _list.search(nome);
   }
 }

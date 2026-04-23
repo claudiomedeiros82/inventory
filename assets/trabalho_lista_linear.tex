@@ -9,6 +9,9 @@
 \usepackage{color}
 \usepackage{geometry}
 \usepackage{longtable}
+\usepackage{float}
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
 
 \geometry{a4paper, margin=2.5cm}
 
@@ -232,7 +235,7 @@ class CustomLinkedList {
 
 A tabela a seguir resume as operações e suas complexidades:
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \begin{tabular}{|l|l|l|l|}
 \hline
@@ -318,9 +321,9 @@ class InventoryService {
 
 Ao iniciar, o sistema lê o arquivo \texttt{items.txt} e carrega os 100 itens na lista encadeada, exibindo-os em ordem na tela principal.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{../prints/init.png}
+    \includegraphics[width=0.8\textwidth]{prints/init.png}
     \caption{Tela inicial do BUNKER OS. O cabeçalho exibe o nome do sistema (\texttt{--- BUNKER OS v1.0.4 ---}) e o total de itens carregados (\texttt{SUPPLY MANIFEST – TOTAL ITEMS: 100}). A lista percorre todos os nós da estrutura encadeada via \texttt{toList()}, numerando-os sequencialmente entre colchetes. O primeiro item aparece selecionado por padrão (\texttt{>}). Na parte inferior, a barra de menu exibe os comandos disponíveis.}
 \end{figure}
 
@@ -333,15 +336,15 @@ O comando \texttt{add <nome>} cria um novo \texttt{ItemEntity}, instancia um \te
 \textbf{Sintaxe:} \texttt{add <nome do item>}  \\
 \textbf{Exemplo:} \texttt{add Sabão Crá Crá}
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{../prints/add item.png}
+    \includegraphics[width=0.8\textwidth]{prints/add item.png}
     \caption{O operador digita \texttt{add sabão crá crá} no prompt. A lista exibe os itens 089 a 100. O cabeçalho já indica "TOTAL ITEMS: 101" após a inserção do nó ao final da cadeia.}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{../prints/item added.png}
+    \includegraphics[width=0.8\textwidth]{prints/item added.png}
     \caption{Após a execução do \texttt{add}, o sistema navega automaticamente até o novo item e o seleciona (\texttt{>}), confirmando ao operador que o nó foi inserido no final da lista encadeada. O item \texttt{[101]> SABÃO CRÁ CRÁ} aparece como último elemento da cadeia.}
 \end{figure}
 
@@ -360,9 +363,9 @@ O comando \texttt{search <texto>} aciona o método \texttt{search()} da \texttt{
 \textbf{Sintaxe:} \texttt{search <nome ou trecho do nome>}  \\
 \textbf{Exemplo:} \texttt{search mercurio}
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{../prints/find item.png}
+    \includegraphics[width=0.8\textwidth]{prints/find item.png}
     \caption{O comando \texttt{search mercurio} localizou o item "Termômetro de Mercúrio Clínico" no índice \#94 da lista encadeada. O cabeçalho exibe \texttt{> ITEM \#94 LOCALIZADO: "Termômetro de Mercúrio Clínico"}. A lista rolou até o nó correspondente, que aparece selecionado com \texttt{>} ao lado de \texttt{[094]>}. A normalização de diacríticos permitiu localizar "Mercúrio" com a busca "mercurio", sem acento.}
 \end{figure}
 
@@ -375,9 +378,9 @@ O comando \texttt{remove <índice>} (ou \texttt{del <índice>}) identifica o ite
 \textbf{Sintaxe:} \texttt{remove <número do índice>}  \\
 \textbf{Exemplo:} \texttt{remove 015}
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{../prints/remove item.png}
+    \includegraphics[width=0.8\textwidth]{prints/remove item.png}
     \caption{O operador digita \texttt{remove 015} no prompt. A tela exibe o estado pós-busca (item \#94 selecionado, mensagem no cabeçalho). Ao confirmar na caixa de diálogo, o método \texttt{remove()} localiza o 15º nó da cadeia ("Bandagens de Linho Sujas"), redireciona o ponteiro \texttt{next} do nó anterior para o nó seguinte, descartando a referência ao nó removido, e regrava o arquivo.}
 \end{figure}
 
@@ -397,7 +400,8 @@ O inventário é carregado do \texttt{items.txt} na inicialização via \texttt{
 
 O arquivo utilizado no sistema contém exatamente 100 itens, um por linha, gerados conforme o prompt descrito na introdução. O conteúdo é o seguinte:
 
-\begin{lstlisting}[language=bash]
+\begin{quote}
+\obeylines
 Ração Enlatada de Carne Desconhecida
 Pastilhas de Purificação de Água Vencidas
 Máscara de Gás M-40 Rasgada
@@ -498,7 +502,7 @@ Fígado de Bacalhau em Óleo
 Detergente Biodegradável Seco
 Potenciômetros Deslizantes Ruins
 Bastão Retrátil de Metal
-\end{lstlisting}
+\end{quote}
 
 \section{CONCLUSÃO}
 

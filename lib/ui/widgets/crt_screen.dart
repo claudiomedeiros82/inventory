@@ -12,27 +12,7 @@ class CRTScreen extends StatelessWidget {
       children: [
         // CRT Background
         Positioned.fill(
-          child: Container(
-            color: AppTheme.screenBackgroundColor,
-          ),
-        ),
-        
-        // Lens Curvature Effect (Slight gradient at edges)
-        Positioned.fill(
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: RadialGradient(
-                center: Alignment.center,
-                radius: 1.2,
-                colors: [
-                  Colors.transparent,
-                  Colors.black.withAlpha(50),
-                  Colors.black.withAlpha(150),
-                ],
-                stops: const [0.0, 0.8, 1.0],
-              ),
-            ),
-          ),
+          child: Container(color: AppTheme.screenBackgroundColor),
         ),
 
         // Main Content
@@ -46,28 +26,52 @@ class CRTScreen extends StatelessWidget {
         // Scanlines Overlay
         Positioned.fill(
           child: IgnorePointer(
-            child: CustomPaint(
-              painter: ScanlinePainter(),
-            ),
+            child: CustomPaint(painter: ScanlinePainter()),
           ),
         ),
 
-        // CRT Glow / Flicker (Subtle)
+        // Lens curvature vignette (stronger at edges for CRT glass look)
         Positioned.fill(
           child: IgnorePointer(
             child: Container(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
+                gradient: RadialGradient(
+                  center: Alignment.center,
+                  radius: 1.1,
                   colors: [
-                    AppTheme.primaryColor.withAlpha(5),
                     Colors.transparent,
-                    AppTheme.primaryColor.withAlpha(5),
+                    Colors.black.withAlpha(40),
+                    Colors.black.withAlpha(130),
+                  ],
+                  stops: const [0.0, 0.75, 1.0],
+                ),
+              ),
+            ),
+          ),
+        ),
+
+        // Phosphor green glow overlay (subtle warm bloom from content)
+        Positioned.fill(
+          child: IgnorePointer(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  center: Alignment.center,
+                  radius: 0.9,
+                  colors: [
+                    AppTheme.primaryColor.withAlpha(8),
+                    Colors.transparent,
                   ],
                 ),
               ),
             ),
+          ),
+        ),
+
+        // Corner darkening (CRT corners are always darker)
+        Positioned.fill(
+          child: IgnorePointer(
+            child: CustomPaint(painter: CornerVignettePainter()),
           ),
         ),
       ],
@@ -79,11 +83,49 @@ class ScanlinePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.black.withAlpha(30)
+      ..color = Colors.black.withAlpha(35)
       ..strokeWidth = 1.0;
 
     for (double i = 0; i < size.height; i += 3) {
       canvas.drawLine(Offset(0, i), Offset(size.width, i), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class CornerVignettePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    // Darken each corner with radial gradients
+    final corners = [
+      Alignment.topLeft,
+      Alignment.topRight,
+      Alignment.bottomLeft,
+      Alignment.bottomRight,
+    ];
+
+    for (final corner in corners) {
+      final cx = corner.x == -1 ? 0.0 : size.width;
+      final cy = corner.y == -1 ? 0.0 : size.height;
+      final radius = size.shortestSide * 0.55;
+
+      final gradient = RadialGradient(
+        center: corner,
+        radius: 1.0,
+        colors: [
+          Colors.black.withAlpha(120),
+          Colors.transparent,
+        ],
+      );
+
+      final paint = Paint()
+        ..shader = gradient.createShader(
+          Rect.fromCircle(center: Offset(cx, cy), radius: radius),
+        );
+
+      canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
     }
   }
 

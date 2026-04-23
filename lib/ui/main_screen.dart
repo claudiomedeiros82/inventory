@@ -12,6 +12,7 @@ import 'widgets/command_line_input.dart';
 import 'widgets/terminal_menu.dart';
 import '../core/domain/item_entity.dart';
 import 'widgets/terminal_alert_dialog.dart';
+import 'theme/app_theme.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -296,9 +297,12 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BezelFrame(
-        child: CRTScreen(
-          child: KeyboardListener(
+      backgroundColor: AppTheme.backgroundColor,
+      body: Padding(
+        padding: const EdgeInsets.all(18),
+        child: BezelFrame(
+          child: CRTScreen(
+            child: KeyboardListener(
             focusNode: _keyboardFocusNode,
             onKeyEvent: _handleKeyEvent,
             child: Column(
@@ -322,6 +326,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ),
       ),
-    );
+    ),
+  );
   }
 }

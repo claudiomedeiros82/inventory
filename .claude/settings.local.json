@@ -25,7 +25,16 @@
       "Bash(curl -s \"https://pncp.gov.br/api/pncp/v1/orgaos/28167567000176/compras/2026/15/itens?pagina=1&tamanhoPagina=5\" -H \"Accept: application/json\" -H \"User-Agent: Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36\")",
       "Bash(cat d:/Desenvolvimento/Dart/pncp_finder/test/core/services/*.dart)",
       "Bash(dart analyze:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(flutter build *)",
+      "Bash(pandoc --version)",
+      "PowerShell(pandoc --version 2>&1)",
+      "PowerShell(python --version 2>&1)",
+      "PowerShell(python3 --version 2>&1)",
+      "PowerShell(python -c \"import pip; print\\('pip ok'\\)\" 2>&1)",
+      "PowerShell(python -m pip list 2>&1)",
+      "PowerShell(python -m pip install weasyprint 2>&1)",
+      "PowerShell(python -m pip install markdown 2>&1)"
     ]
   }
 }
